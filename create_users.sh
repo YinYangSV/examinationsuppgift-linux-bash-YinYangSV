@@ -8,8 +8,6 @@ for user in "$@" ; do
     id "$user" &>/dev/null
 if [ $? -eq 0 ]; then
     echo "Användaren $@ finns redan i systemet"
-    else
-    echo "Skapar användare för $@"
 fi
 
 useradd -m "$user"
