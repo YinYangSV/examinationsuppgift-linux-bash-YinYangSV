@@ -8,6 +8,7 @@ for user in "$@" ; do
     id "$user" &>/dev/null
 if [ $? -eq 0 ]; then
     echo "Användaren $@ finns redan i systemet"
+    continue
 fi
 
 useradd -m "$user"
