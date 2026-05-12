@@ -88,7 +88,8 @@ Förutom koden ska du spela in en kort skärminspelning där du demonstrerar din
 2.  Döp filen till exakt: `videoprov.mp4`.
 3.  Lägg filen i rotmappen (samma ställe som denna README).
 4.  **OBS:** Filen får inte vara större än 100MB.
-
+¤¤ Video
+[Se videon här](videoprov.mp4)
 ---
 
 ## 🚀 Hur du testar din kod
