@@ -90,6 +90,11 @@ Förutom koden ska du spela in en kort skärminspelning där du demonstrerar din
 4.  **OBS:** Filen får inte vara större än 100MB.
 ¤¤ Video
 [Se videon här](videoprov.mp4)
+=======
+
+
+
+>>>>>>> ddeb6ed8a02e75f7560e03c2c73980bd4c81d12b
 ---
 
 ## 🚀 Hur du testar din kod
