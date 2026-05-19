@@ -1,45 +1,50 @@
 #!/bin/bash
-#Kontrolerear root, $EUID är en befintlig variablem, "-ne 0" kollar om den är 0, det vill säga om värdet är 0 är det en root användare,
-#om rootanvändaren finns kommer medelandet "upp kör som root!", annars forsätter den med koden
+
+# Kontrollerar root-behörighet
 if [ "$EUID" -ne 0 ]; then
     echo "Kör som root!"
     exit 1
 fi
-#kontrollerar att minst ett argument skickats in
+
+# Kontrollerar att minst ett argument skickats in
 if [ "$#" -eq 0 ]; then
-    echo "Användning $0 <användare1> <användare2>..."
+    echo "Användning: $0 <användare1> <användare2> ..."
     exit 1
 fi
-    
-#Här börjar loopen för användarskapandet
-#Första delen kollar om användaren finns i systemet och därefter antingen fortsätter med att skapa en användare eller,
-#att avsluta koden med ett felmeddelande att användaren redan finns
+
+# Loopar igenom alla användare som skickats in
 for user in "$@"; do
-    
-if id "$user" &>/dev/null; then
-    echo "Användaren $user finns redan i systemet, testa ett annat namn"
-    continue
-fi
-#Skapar användare och lägger till /home i direktory med -m, samt undviker stikta regler med --badname
+
+    # Kontrollerar om användaren redan finns
+    if id "$user" &>/dev/null; then
+        echo "Användaren $user finns redan i systemet, hoppar över."
+        continue
+    fi
+
+    # Skapar användaren med hemkatalog
     useradd --badname -m "$user"
-#mkdir skapar vi undermapparna för användaren och då skapar vi,Documents, Downloads, Work. Sedan ifall undermapparna redan finns så skapas dem inte och de skickas inget felmeddelande via -p
+
+    # Skapar undermappar
     mkdir -p "/home/$user/Documents"
     mkdir -p "/home/$user/Downloads"
     mkdir -p "/home/$user/Work"
 
-#Nu sätter vi att användaren blir ägaren över undermapparna, och tillsammans med chown senare äger användaren hela sin användarflik och allt inom de också
+    # Sätter rättigheter på undermappar (endast ägaren kommer åt dem)
     chmod 700 "/home/$user/Documents"
     chmod 700 "/home/$user/Downloads"
     chmod 700 "/home/$user/Work"
 
-echo "Välkommen $user" > /home/$user/welcome.txt
+    # Skapar en personlig välkomstfil
+    echo "Välkommen $user!" > "/home/$user/welcome.txt"
+    echo "Ditt konto skapades: $(date)" >> "/home/$user/welcome.txt"
+    echo "Dina mappar: Work, Downloads, Documents" >> "/home/$user/welcome.txt"
 
-#Cut hämtar första fältet i /etc/passwd, alltså användaren och tar bort den aktuella användaren från listan "| grep -v
-    cut -d: -f1 /etc/passwd | grep -v "^$user$" >> "/home/$user/welcome.txt"
+    # Sätter användaren som ägare av hela hemkatalogen
+    chown -R "$user":"$user" "/home/$user"
 
-    chown -R "$user:$user" "/home/$user"
-
-#skickar ut välkommen meddelantet
-    cat /home/$user/welcome.txt
+    # Skriver ut välkomstfilen
+    echo "--- Användare $user skapad ---"
+    cat "/home/$user/welcome.txt"
+    echo ""
 
 done
