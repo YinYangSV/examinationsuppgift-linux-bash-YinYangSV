@@ -3,22 +3,22 @@
 #om rootanvändaren finns kommer medelandet "upp kör som root!", annars forsätter den med koden
 if [ "$EUID" -ne 0 ]; then
     echo "Kör som root!"
-    exit "Användaren är ej root!"
+    exit 1
 fi
 #kontrollerar att minst ett argument skickats in
 if [ "$#" -eq 0 ]; then
     echo "Användning $0 <användare1> <användare2>..."
-    return 1
+    exit 1
 fi
     
 #Här börjar loopen för användarskapandet
 #Första delen kollar om användaren finns i systemet och därefter antingen fortsätter med att skapa en användare eller,
 #att avsluta koden med ett felmeddelande att användaren redan finns
-for user in $@; do
+for user in "$@"; do
     
 if id "$user" &>/dev/null; then
     echo "Användaren $user finns redan i systemet, testa ett annat namn"
-    return 1
+    continue
 fi
 #Skapar användare och lägger till /home i direktory med -m, samt undviker stikta regler med --badname
     useradd --badname -m "$user"
